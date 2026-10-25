@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.jv.spring</groupId>
+        <artifactId>Ejemplo-Parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ejemplo-api-application</artifactId>
+    <name>ejemplo-api-application</name>
+
+    <dependencies>
+        <!-- Conoce las interfaces de salida y modelos de negocio -->
+        <dependency>
+            <groupId>com.jv.spring</groupId>
+            <artifactId>ejemplo-api-core</artifactId>
+        </dependency>
+
+        <!-- Conoce las interfaces de entrada y contratos HTTP que debe implementar -->
+        <dependency>
+            <groupId>com.jv.spring</groupId>
+            <artifactId>ejemplo-api-contract</artifactId>
+        </dependency>
+    </dependencies>
+</project>
