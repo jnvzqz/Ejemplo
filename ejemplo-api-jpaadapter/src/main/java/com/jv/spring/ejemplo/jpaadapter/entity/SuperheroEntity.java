@@ -25,19 +25,10 @@ public class SuperheroEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-	
-	/**
-	 * Name of the superhero
-	 */
-	private String heroName;
-	
-	/**
-	 * Real name of the superhero
-	 */
-	private String realName;
-	
-	/**
-	 * Superpower of the superhero
-	 */
-	private String superpower;
+
+    private String heroName;
+
+    private String realName;
+
+    private String superpower;
 }
