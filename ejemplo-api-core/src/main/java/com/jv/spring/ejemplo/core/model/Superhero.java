@@ -15,11 +15,9 @@ import lombok.ToString;
 @ToString
 @Builder
 public class Superhero {
-	
-	 public static class SuperheroEntityBuilder {}
 
-	private String id;
-	private String heroName;
-	private String realName;
-	private String superpower;
+    private Long id;
+    private String heroName;
+    private String realName;
+    private String superpower;
 }

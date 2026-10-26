@@ -1,9 +1,10 @@
-package com.jv.spring.ejemplo.rest.impl;
+package com.jv.spring.ejemplo.application.usecase;
 
+import com.jv.spring.ejemplo.application.mapper.SuperheroMapper;
 import com.jv.spring.ejemplo.contract.dto.SuperheroDto;
 import com.jv.spring.ejemplo.contract.dto.SuperheroResponse;
-import com.jv.spring.ejemplo.contract.service.SuperheroService;
 import com.jv.spring.ejemplo.contract.exception.SuperheroNotFoundException;
+import com.jv.spring.ejemplo.contract.service.SuperheroService;
 import com.jv.spring.ejemplo.core.model.Superhero;
 import com.jv.spring.ejemplo.core.ports.outbound.SuperheroRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,12 +19,13 @@ import java.util.stream.Collectors;
 public class SuperheroServiceImpl implements SuperheroService {
 
     private final SuperheroRepository superheroRepository;
+    private final SuperheroMapper superheroMapper;
 
     @Override
     public SuperheroDto createSuperhero(SuperheroDto dto) {
-        Superhero superhero = new Superhero(null, dto.heroName(), dto.realName(), dto.superpower());
-        Superhero savedHero = superheroRepository.save(superhero);
-        return toDto(savedHero);
+        Superhero superhero = superheroMapper.toModel(dto);
+        superhero.setId(null);
+        return superheroMapper.toDto(superheroRepository.save(superhero));
     }
 
     @Override
@@ -34,9 +35,7 @@ public class SuperheroServiceImpl implements SuperheroService {
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
         boolean isLast = pageNo >= totalPages - 1;
 
-        List<SuperheroDto> content = heroes.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        List<SuperheroDto> content = heroes.stream().map(superheroMapper::toDto).toList();
 
         log.info("{} superheroes were found in the DB", totalElements);
         return new SuperheroResponse(content, pageNo, pageSize, totalElements, totalPages, isLast);
@@ -46,7 +45,7 @@ public class SuperheroServiceImpl implements SuperheroService {
     public SuperheroDto buscarPorId(Long id) {
         Superhero superhero = superheroRepository.findById(id)
                 .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found in the DB"));
-        return toDto(superhero);
+        return superheroMapper.toDto(superhero);
     }
 
     @Override
@@ -56,9 +55,7 @@ public class SuperheroServiceImpl implements SuperheroService {
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
         boolean isLast = pageNo >= totalPages - 1;
 
-        List<SuperheroDto> content = heroes.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        List<SuperheroDto> content = heroes.stream().map(superheroMapper::toDto).toList();
 
         log.info("{} superheroes were found with the matching string", totalElements);
         return new SuperheroResponse(content, pageNo, pageSize, totalElements, totalPages, isLast);
@@ -76,9 +73,8 @@ public class SuperheroServiceImpl implements SuperheroService {
                 patchedSuperhero.superpower() != null ? patchedSuperhero.superpower() : existingHero.getSuperpower()
         );
 
-        Superhero savedHero = superheroRepository.save(updatedHero);
         log.info("Superhero with id: {} was updated in the DB", id);
-        return toDto(savedHero);
+        return superheroMapper.toDto(superheroRepository.save(updatedHero));
     }
 
     @Override
@@ -87,10 +83,5 @@ public class SuperheroServiceImpl implements SuperheroService {
                 .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found in the DB"));
         superheroRepository.deleteById(id);
         log.info("Superhero with id: {} was deleted from the DB", id);
-    }
-
-    // Mapeo manual local: Rápido, seguro y libre de problemas de configuración en directo
-    private SuperheroDto toDto(Superhero model) {
-        return new SuperheroDto(Long.parseLong(model.getId()), model.getHeroName(), model.getRealName(), model.getSuperpower());
     }
 }

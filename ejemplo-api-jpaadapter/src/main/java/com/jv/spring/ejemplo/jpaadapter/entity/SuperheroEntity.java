@@ -21,15 +21,10 @@ import lombok.ToString;
 @ToString
 @Builder
 public class SuperheroEntity {
-	
-	 public static class SuperheroEntityBuilder {}
 
-	/**
-	 * Identifier of the superhero
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 	
 	/**
 	 * Name of the superhero
