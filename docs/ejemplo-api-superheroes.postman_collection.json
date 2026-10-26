@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "Ejemplo API - Superheroes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "superheroId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Crear superhéroe",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/superheroes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "superheroes"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"HeroName\": \"Spider-Man\",\n  \"RealName\": \"Peter Parker\",\n  \"SuperPower\": \"Web-slinging\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Obtener todos (paginado)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/superheroes?pageNo=0&pageSize=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "superheroes"],
+          "query": [
+            {
+              "key": "pageNo",
+              "value": "0"
+            },
+            {
+              "key": "pageSize",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Obtener por ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/superheroes/{{superheroId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "superheroes", "{{superheroId}}"]
+        }
+      }
+    },
+    {
+      "name": "Buscar por nombre (paginado)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/superheroes/search?name=Spider&pageNo=0&pageSize=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "superheroes", "search"],
+          "query": [
+            {
+              "key": "name",
+              "value": "Spider"
+            },
+            {
+              "key": "pageNo",
+              "value": "0"
+            },
+            {
+              "key": "pageSize",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Actualizar parcialmente (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/superheroes/{{superheroId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "superheroes", "{{superheroId}}"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"HeroName\": \"Amazing Spider-Man\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Eliminar superhéroe",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/superheroes/{{superheroId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "superheroes", "{{superheroId}}"]
+        }
+      }
+    }
+  ]
+}
