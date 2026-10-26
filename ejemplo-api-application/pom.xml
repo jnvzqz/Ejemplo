@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.jv.spring</groupId>
-        <artifactId>Ejemplo-Parent</artifactId>
+        <artifactId>ejemplo-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,31 +13,22 @@
     <name>ejemplo-api-application</name>
 
     <dependencies>
-        <!-- Conoce las interfaces de salida y modelos de negocio -->
         <dependency>
             <groupId>com.jv.spring</groupId>
             <artifactId>ejemplo-api-core</artifactId>
         </dependency>
-
-        <!-- Conoce las interfaces de entrada y contratos HTTP que debe implementar -->
         <dependency>
             <groupId>com.jv.spring</groupId>
             <artifactId>ejemplo-api-contract</artifactId>
         </dependency>
-
-        <!-- Spring context para @Service y arranque de la aplicación -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
-        <!-- MapStruct para el mapper dominio <-> DTO -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
         </dependency>
-
-        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -54,25 +45,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>0.2.0</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

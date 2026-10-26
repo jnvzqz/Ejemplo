@@ -1,4 +1,4 @@
-package com.jv.spring.ejemplo.contract.exception;
+package com.jv.spring.ejemplo.core.exception;
 
 public class SuperheroNotFoundException extends RuntimeException {
 

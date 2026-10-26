@@ -6,54 +6,54 @@ import com.jv.spring.ejemplo.contract.dto.SuperheroResponse;
 public interface SuperheroService {
 
     /**
-     * Registra un nuevo superhéroe en el sistema.
+     * Registers a new superhero in the system.
      *
-     * @param superheroDto Objeto de datos con la información del héroe a crear.
-     * @return El objeto de datos del superhéroe una vez persistido en el sistema.
+     * @param superheroDto DTO with the hero data to create.
+     * @return The DTO of the persisted superhero.
      */
     SuperheroDto createSuperhero(SuperheroDto superheroDto);
 
     /**
-     * Recupera una lista paginada de todos los superhéroes registrados.
+     * Retrieves a paginated list of all registered superheroes.
      *
-     * @param pageNo Número de la página solicitada (basado en índice 0).
-     * @param pageSize Cantidad de elementos máximos por página.
-     * @return Un objeto de respuesta que encapsula la lista de DTOs y la metadata de paginación.
+     * @param pageNo   Zero-based page number.
+     * @param pageSize Maximum number of elements per page.
+     * @return Response object encapsulating the list and pagination metadata.
      */
-    SuperheroResponse obtenerTodosPaginado(int pageNo, int pageSize);
+    SuperheroResponse findAllPaginated(int pageNo, int pageSize);
 
     /**
-     * Busca un único superhéroe por su identificador único.
+     * Finds a single superhero by its unique identifier.
      *
-     * @param id Identificador numérico del superhéroe.
-     * @return El DTO del superhéroe si es hallado.
-     * @throws RuntimeException (o excepción personalizada) si el identificador no existe.
+     * @param id Numeric identifier of the superhero.
+     * @return The DTO of the found superhero.
+     * @throws com.jv.spring.ejemplo.core.exception.SuperheroNotFoundException if the ID does not exist.
      */
-    SuperheroDto buscarPorId(Long id);
+    SuperheroDto findById(Long id);
 
     /**
-     * Recupera una lista paginada de superhéroes cuyo nombre coincida de forma parcial con el texto provisto.
+     * Retrieves a paginated list of superheroes whose name partially matches the given text.
      *
-     * @param nombre Texto parcial o completo del nombre del superhéroe a filtrar.
-     * @param pageNo Número de la página solicitada (basado en índice 0).
-     * @param pageSize Cantidad de elementos máximos por página.
-     * @return Un objeto de respuesta con los elementos filtrados y su metadata de paginación.
+     * @param name     Partial or full name to filter by.
+     * @param pageNo   Zero-based page number.
+     * @param pageSize Maximum number of elements per page.
+     * @return Response object with filtered results and pagination metadata.
      */
-    SuperheroResponse buscarPorNombrePaginado(String nombre, int pageNo, int pageSize);
+    SuperheroResponse findByNamePaginated(String name, int pageNo, int pageSize);
 
     /**
-     * Modifica parcialmente las propiedades de un superhéroe existente.
+     * Partially updates the properties of an existing superhero.
      *
-     * @param id Identificador numérico del superhéroe a modificar.
-     * @param superheroDto DTO que contiene los campos clave que se desean actualizar.
-     * @return El DTO del superhéroe reflejando los cambios guardados.
+     * @param id           Numeric identifier of the superhero to update.
+     * @param superheroDto DTO containing the fields to update (null fields are ignored).
+     * @return The DTO of the superhero reflecting the saved changes.
      */
     SuperheroDto patchSuperhero(Long id, SuperheroDto superheroDto);
 
     /**
-     * Elimina de forma física un superhéroe del sistema.
+     * Permanently deletes a superhero from the system.
      *
-     * @param id Identificador numérico del superhéroe a dar de baja.
+     * @param id Numeric identifier of the superhero to delete.
      */
     void deleteSuperhero(Long id);
 }

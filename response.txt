@@ -1,1 +1,0 @@
-{"Id":null,"HeroName":null,"RealName":null,"SuperPower":null}

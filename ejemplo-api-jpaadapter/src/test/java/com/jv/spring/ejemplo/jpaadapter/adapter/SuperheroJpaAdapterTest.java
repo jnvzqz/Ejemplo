@@ -53,7 +53,7 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testFindById_encontrado() {
+    void testFindById_found() {
         //Given
         SuperheroEntity entity = new SuperheroEntity(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         Superhero domain = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
@@ -71,7 +71,7 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testFindById_noEncontrado() {
+    void testFindById_notFound() {
         //Given
         when(jpaRepository.findById(99L)).thenReturn(Optional.empty());
 
@@ -83,7 +83,7 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testFindAllPaginado() {
+    void testFindAllPaginated() {
         //Given
         SuperheroEntity entity = new SuperheroEntity(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         Superhero domain = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
@@ -92,7 +92,7 @@ class SuperheroJpaAdapterTest {
         when(mapper.toDomain(entity)).thenReturn(domain);
 
         //When
-        List<Superhero> result = adapter.findAllPaginado(0, 10);
+        List<Superhero> result = adapter.findAllPaginated(0, 10);
 
         //Then
         assertNotNull(result);
@@ -101,12 +101,12 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testFindAllPaginado_listaVacia() {
+    void testFindAllPaginated_emptyList() {
         //Given
         when(jpaRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
 
         //When
-        List<Superhero> result = adapter.findAllPaginado(0, 10);
+        List<Superhero> result = adapter.findAllPaginated(0, 10);
 
         //Then
         assertNotNull(result);
@@ -114,7 +114,7 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testFindByHeroNamePaginado() {
+    void testFindByNamePaginated() {
         //Given
         SuperheroEntity entity = new SuperheroEntity(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         Superhero domain = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
@@ -124,7 +124,7 @@ class SuperheroJpaAdapterTest {
         when(mapper.toDomain(entity)).thenReturn(domain);
 
         //When
-        List<Superhero> result = adapter.findByHeroNamePaginado("Spider", 0, 10);
+        List<Superhero> result = adapter.findByNamePaginated("Spider", 0, 10);
 
         //Then
         assertNotNull(result);
@@ -133,13 +133,13 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testFindByHeroNamePaginado_sinResultados() {
+    void testFindByNamePaginated_noResults() {
         //Given
         when(jpaRepository.findByHeroNameContainingIgnoreCase(eq("Xyzzy"), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
 
         //When
-        List<Superhero> result = adapter.findByHeroNamePaginado("Xyzzy", 0, 10);
+        List<Superhero> result = adapter.findByNamePaginated("Xyzzy", 0, 10);
 
         //Then
         assertNotNull(result);
@@ -159,12 +159,12 @@ class SuperheroJpaAdapterTest {
     }
 
     @Test
-    void testCountByHeroName() {
+    void testCountByName() {
         //Given
         when(jpaRepository.countByHeroNameContainingIgnoreCase("Spider")).thenReturn(2L);
 
         //When
-        long result = adapter.countByHeroName("Spider");
+        long result = adapter.countByName("Spider");
 
         //Then
         assertEquals(2L, result);
@@ -180,5 +180,6 @@ class SuperheroJpaAdapterTest {
 
         //Then
         verify(jpaRepository, times(1)).deleteById(1L);
+        verifyNoMoreInteractions(jpaRepository, mapper);
     }
 }

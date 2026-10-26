@@ -29,15 +29,15 @@ public class SuperheroJpaAdapter implements SuperheroRepository {
     }
 
     @Override
-    public List<Superhero> findAllPaginado(int pageNo, int pageSize) {
+    public List<Superhero> findAllPaginated(int pageNo, int pageSize) {
         return jpaRepository.findAll(PageRequest.of(pageNo, pageSize))
                 .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
-    public List<Superhero> findByHeroNamePaginado(String heroName, int pageNo, int pageSize) {
-        return jpaRepository.findByHeroNameContainingIgnoreCase(heroName, PageRequest.of(pageNo, pageSize))
+    public List<Superhero> findByNamePaginated(String name, int pageNo, int pageSize) {
+        return jpaRepository.findByHeroNameContainingIgnoreCase(name, PageRequest.of(pageNo, pageSize))
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -48,8 +48,8 @@ public class SuperheroJpaAdapter implements SuperheroRepository {
     }
 
     @Override
-    public long countByHeroName(String heroName) {
-        return jpaRepository.countByHeroNameContainingIgnoreCase(heroName);
+    public long countByName(String name) {
+        return jpaRepository.countByHeroNameContainingIgnoreCase(name);
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.jv.spring.ejemplo.application.usecase;
 import com.jv.spring.ejemplo.application.mapper.SuperheroMapper;
 import com.jv.spring.ejemplo.contract.dto.SuperheroDto;
 import com.jv.spring.ejemplo.contract.dto.SuperheroResponse;
-import com.jv.spring.ejemplo.contract.exception.SuperheroNotFoundException;
 import com.jv.spring.ejemplo.contract.service.SuperheroService;
+import com.jv.spring.ejemplo.core.exception.SuperheroNotFoundException;
 import com.jv.spring.ejemplo.core.model.Superhero;
 import com.jv.spring.ejemplo.core.ports.outbound.SuperheroRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,64 +24,63 @@ public class SuperheroServiceImpl implements SuperheroService {
     @Override
     public SuperheroDto createSuperhero(SuperheroDto dto) {
         Superhero superhero = superheroMapper.toModel(dto);
-        superhero.setId(null);
         return superheroMapper.toDto(superheroRepository.save(superhero));
     }
 
     @Override
-    public SuperheroResponse obtenerTodosPaginado(int pageNo, int pageSize) {
-        List<Superhero> heroes = superheroRepository.findAllPaginado(pageNo, pageSize);
+    public SuperheroResponse findAllPaginated(int pageNo, int pageSize) {
+        List<Superhero> heroes = superheroRepository.findAllPaginated(pageNo, pageSize);
         long totalElements = superheroRepository.countAll();
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
         boolean isLast = pageNo >= totalPages - 1;
 
         List<SuperheroDto> content = heroes.stream().map(superheroMapper::toDto).toList();
 
-        log.info("{} superheroes were found in the DB", totalElements);
+        log.info("{} superheroes found in the DB", totalElements);
         return new SuperheroResponse(content, pageNo, pageSize, totalElements, totalPages, isLast);
     }
 
     @Override
-    public SuperheroDto buscarPorId(Long id) {
+    public SuperheroDto findById(Long id) {
         Superhero superhero = superheroRepository.findById(id)
-                .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found in the DB"));
+                .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found"));
         return superheroMapper.toDto(superhero);
     }
 
     @Override
-    public SuperheroResponse buscarPorNombrePaginado(String nombre, int pageNo, int pageSize) {
-        List<Superhero> heroes = superheroRepository.findByHeroNamePaginado(nombre, pageNo, pageSize);
-        long totalElements = superheroRepository.countByHeroName(nombre);
+    public SuperheroResponse findByNamePaginated(String name, int pageNo, int pageSize) {
+        List<Superhero> heroes = superheroRepository.findByNamePaginated(name, pageNo, pageSize);
+        long totalElements = superheroRepository.countByName(name);
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
         boolean isLast = pageNo >= totalPages - 1;
 
         List<SuperheroDto> content = heroes.stream().map(superheroMapper::toDto).toList();
 
-        log.info("{} superheroes were found with the matching string", totalElements);
+        log.info("{} superheroes found matching '{}'", totalElements, name);
         return new SuperheroResponse(content, pageNo, pageSize, totalElements, totalPages, isLast);
     }
 
     @Override
-    public SuperheroDto patchSuperhero(Long id, SuperheroDto patchedSuperhero) {
-        Superhero existingHero = superheroRepository.findById(id)
-                .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found in the DB"));
+    public SuperheroDto patchSuperhero(Long id, SuperheroDto patch) {
+        Superhero existing = superheroRepository.findById(id)
+                .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found"));
 
-        Superhero updatedHero = new Superhero(
-                existingHero.getId(),
-                patchedSuperhero.heroName() != null ? patchedSuperhero.heroName() : existingHero.getHeroName(),
-                patchedSuperhero.realName() != null ? patchedSuperhero.realName() : existingHero.getRealName(),
-                patchedSuperhero.superpower() != null ? patchedSuperhero.superpower() : existingHero.getSuperpower()
-        );
+        Superhero updated = Superhero.builder()
+                .id(existing.getId())
+                .heroName(patch.heroName() != null ? patch.heroName() : existing.getHeroName())
+                .realName(patch.realName() != null ? patch.realName() : existing.getRealName())
+                .superpower(patch.superpower() != null ? patch.superpower() : existing.getSuperpower())
+                .build();
 
-        log.info("Superhero with id: {} was updated in the DB", id);
-        return superheroMapper.toDto(superheroRepository.save(updatedHero));
+        log.info("Superhero with id: {} updated", id);
+        return superheroMapper.toDto(superheroRepository.save(updated));
     }
 
     @Override
     public void deleteSuperhero(Long id) {
         superheroRepository.findById(id)
-                .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found in the DB"));
+                .orElseThrow(() -> new SuperheroNotFoundException("Superhero with id: " + id + " was not found"));
         superheroRepository.deleteById(id);
-        log.info("Superhero with id: {} was deleted from the DB", id);
+        log.info("Superhero with id: {} deleted", id);
     }
 }

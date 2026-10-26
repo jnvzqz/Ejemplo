@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class SuperheroesControllerTest {
 
     @Mock
-    private SuperheroService superheroesService;
+    private SuperheroService superheroService;
 
     @InjectMocks
     private SuperheroesController controller;
@@ -31,16 +31,16 @@ class SuperheroesControllerTest {
         SuperheroDto request = new SuperheroDto(null, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroDto saved = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
 
-        when(superheroesService.createSuperhero(request)).thenReturn(saved);
+        when(superheroService.createSuperhero(request)).thenReturn(saved);
 
         // Act
         ResponseEntity<SuperheroDto> response = controller.addSuperhero(request);
 
         // Assert
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
         assertSame(saved, response.getBody());
-        verify(superheroesService, times(1)).createSuperhero(request);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).createSuperhero(request);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
@@ -49,34 +49,34 @@ class SuperheroesControllerTest {
         SuperheroDto dto = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroResponse serviceResponse = new SuperheroResponse(List.of(dto), 0, 10, 1L, 1, true);
 
-        when(superheroesService.obtenerTodosPaginado(0, 10)).thenReturn(serviceResponse);
+        when(superheroService.findAllPaginated(0, 10)).thenReturn(serviceResponse);
 
         // Act
         ResponseEntity<SuperheroResponse> response = controller.getAllSuperheroes(0, 10);
 
         // Assert
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertSame(serviceResponse, response.getBody());
-        verify(superheroesService, times(1)).obtenerTodosPaginado(0, 10);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).findAllPaginated(0, 10);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
-    void getAllSuperheroes_listaVacia_ok() {
+    void getAllSuperheroes_emptyList_ok() {
         // Arrange
         SuperheroResponse serviceResponse = new SuperheroResponse(List.of(), 0, 10, 0L, 0, true);
 
-        when(superheroesService.obtenerTodosPaginado(0, 10)).thenReturn(serviceResponse);
+        when(superheroService.findAllPaginated(0, 10)).thenReturn(serviceResponse);
 
         // Act
         ResponseEntity<SuperheroResponse> response = controller.getAllSuperheroes(0, 10);
 
         // Assert
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().content().isEmpty());
-        verify(superheroesService, times(1)).obtenerTodosPaginado(0, 10);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).findAllPaginated(0, 10);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
@@ -84,16 +84,16 @@ class SuperheroesControllerTest {
         // Arrange
         SuperheroDto dto = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
 
-        when(superheroesService.buscarPorId(1L)).thenReturn(dto);
+        when(superheroService.findById(1L)).thenReturn(dto);
 
         // Act
         ResponseEntity<SuperheroDto> response = controller.getSuperheroById(1L);
 
         // Assert
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertSame(dto, response.getBody());
-        verify(superheroesService, times(1)).buscarPorId(1L);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).findById(1L);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
@@ -102,34 +102,34 @@ class SuperheroesControllerTest {
         SuperheroDto dto = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroResponse serviceResponse = new SuperheroResponse(List.of(dto), 0, 10, 1L, 1, true);
 
-        when(superheroesService.buscarPorNombrePaginado("Spider", 0, 10)).thenReturn(serviceResponse);
+        when(superheroService.findByNamePaginated("Spider", 0, 10)).thenReturn(serviceResponse);
 
         // Act
         ResponseEntity<SuperheroResponse> response = controller.getSuperheroByName("Spider", 0, 10);
 
         // Assert
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertSame(serviceResponse, response.getBody());
-        verify(superheroesService, times(1)).buscarPorNombrePaginado("Spider", 0, 10);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).findByNamePaginated("Spider", 0, 10);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
-    void getSuperheroByName_sinResultados_ok() {
+    void getSuperheroByName_noResults_ok() {
         // Arrange
         SuperheroResponse serviceResponse = new SuperheroResponse(List.of(), 0, 10, 0L, 0, true);
 
-        when(superheroesService.buscarPorNombrePaginado("Xyzzy", 0, 10)).thenReturn(serviceResponse);
+        when(superheroService.findByNamePaginated("Xyzzy", 0, 10)).thenReturn(serviceResponse);
 
         // Act
         ResponseEntity<SuperheroResponse> response = controller.getSuperheroByName("Xyzzy", 0, 10);
 
         // Assert
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().content().isEmpty());
-        verify(superheroesService, times(1)).buscarPorNombrePaginado("Xyzzy", 0, 10);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).findByNamePaginated("Xyzzy", 0, 10);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
@@ -138,30 +138,30 @@ class SuperheroesControllerTest {
         SuperheroDto patch = new SuperheroDto(null, "Amazing Spider-Man", null, null);
         SuperheroDto updated = new SuperheroDto(1L, "Amazing Spider-Man", "Peter Parker", "Web-slinging");
 
-        when(superheroesService.patchSuperhero(1L, patch)).thenReturn(updated);
+        when(superheroService.patchSuperhero(1L, patch)).thenReturn(updated);
 
         // Act
         ResponseEntity<SuperheroDto> response = controller.patchSuperhero(1L, patch);
 
         // Assert
-        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
         assertSame(updated, response.getBody());
-        verify(superheroesService, times(1)).patchSuperhero(1L, patch);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).patchSuperhero(1L, patch);
+        verifyNoMoreInteractions(superheroService);
     }
 
     @Test
     void deleteSuperhero_ok() {
         // Arrange
-        doNothing().when(superheroesService).deleteSuperhero(1L);
+        doNothing().when(superheroService).deleteSuperhero(1L);
 
         // Act
         ResponseEntity<Void> response = controller.deleteSuperhero(1L);
 
         // Assert
-        assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode().value());
         assertNull(response.getBody());
-        verify(superheroesService, times(1)).deleteSuperhero(1L);
-        verifyNoMoreInteractions(superheroesService);
+        verify(superheroService, times(1)).deleteSuperhero(1L);
+        verifyNoMoreInteractions(superheroService);
     }
 }

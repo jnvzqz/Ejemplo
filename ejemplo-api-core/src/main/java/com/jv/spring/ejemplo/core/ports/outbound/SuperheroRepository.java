@@ -1,62 +1,63 @@
 package com.jv.spring.ejemplo.core.ports.outbound;
 
 import com.jv.spring.ejemplo.core.model.Superhero;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface SuperheroRepository {
 
     /**
-     * Registra o actualiza un superhéroe en el sistema de persistencia.
+     * Saves or updates a superhero in the persistence system.
      *
-     * @param superhero Modelo de dominio con los datos a guardar.
-     * @return El modelo de dominio resultante con su ID asignado.
+     * @param superhero Domain model with the data to save.
+     * @return The resulting domain model with its assigned ID.
      */
     Superhero save(Superhero superhero);
 
     /**
-     * Busca un superhéroe por su identificador único.
+     * Finds a superhero by its unique identifier.
      *
-     * @param id El identificador proporcionado.
-     * @return Un Optional que contiene el superhéroe si existe.
+     * @param id The provided identifier.
+     * @return An Optional containing the superhero if found.
      */
     Optional<Superhero> findById(Long id);
 
     /**
-     * Recupera una lista paginada de todos los superhéroes del sistema.
+     * Retrieves a paginated list of all superheroes.
      *
-     * @param pageNo Número de la página solicitada (basado en índice 0).
-     * @param pageSize Cantidad de elementos máximos por página.
-     * @return Lista de modelos de dominio correspondientes a la página solicitada.
+     * @param pageNo   Zero-based page number.
+     * @param pageSize Maximum number of elements per page.
+     * @return List of domain models for the requested page.
      */
-    List<Superhero> findAllPaginado(int pageNo, int pageSize);
+    List<Superhero> findAllPaginated(int pageNo, int pageSize);
 
     /**
-     * Recupera una lista paginada de superhéroes cuyo nombre contenga una cadena específica, ignorando mayúsculas.
+     * Retrieves a paginated list of superheroes whose name contains the given string, case-insensitive.
      *
-     * @param heroName La cadena de búsqueda.
-     * @param pageNo Número de la página solicitada (basado en índice 0).
-     * @param pageSize Cantidad de elementos máximos por página.
-     * @return Lista filtrada de modelos de dominio correspondientes a la página.
+     * @param name     Search string.
+     * @param pageNo   Zero-based page number.
+     * @param pageSize Maximum number of elements per page.
+     * @return Filtered list of domain models for the requested page.
      */
-    List<Superhero> findByHeroNamePaginado(String heroName, int pageNo, int pageSize);
+    List<Superhero> findByNamePaginated(String name, int pageNo, int pageSize);
 
     /**
-     * Devuelve el recuento total de superhéroes registrados en el sistema.
+     * Returns the total count of superheroes in the system.
      */
     long countAll();
 
     /**
-     * Devuelve el recuento total de superhéroes que coinciden con el filtro de nombre provisto.
+     * Returns the total count of superheroes matching the given name filter.
      *
-     * @param heroName La cadena de búsqueda.
+     * @param name Search string.
      */
-    long countByHeroName(String heroName);
+    long countByName(String name);
 
     /**
-     * Elimina físicamente un superhéroe del almacenamiento mediante su ID.
+     * Physically deletes a superhero from storage by its ID.
      *
-     * @param id Identificador único del superhéroe a borrar.
+     * @param id Unique identifier of the superhero to delete.
      */
     void deleteById(Long id);
 }

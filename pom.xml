@@ -8,18 +8,17 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.5</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath />
 	</parent>
 
 	<groupId>com.jv.spring</groupId>
-	<artifactId>Ejemplo-Parent</artifactId>
+	<artifactId>ejemplo-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Ejemplo-Parent</name>
+	<name>ejemplo-parent</name>
 	<description>Proyecto Base Monolito Multimódulo - Estructura Corporativa</description>
 
-	<!-- Tus 5 módulos definitivos -->
 	<modules>
 		<module>ejemplo-api-core</module>
 		<module>ejemplo-api-contract</module>
@@ -33,15 +32,10 @@
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
-		<jackson.version>2.17.1</jackson.version>
-		<junit-jupiter.version>5.11.0-M1</junit-jupiter.version>
-		<h2.version>2.2.224</h2.version>
 	</properties>
 
-	<!-- Gestión centralizada de versiones (Evita repetir versiones en los hijos) -->
 	<dependencyManagement>
 		<dependencies>
-			<!-- Dependencias cruzadas de tus propios módulos internos -->
 			<dependency>
 				<groupId>com.jv.spring</groupId>
 				<artifactId>ejemplo-api-core</artifactId>
@@ -68,34 +62,14 @@
 				<version>${project.version}</version>
 			</dependency>
 
-			<!-- Librerías externas de tu POM original -->
 			<dependency>
 				<groupId>org.mapstruct</groupId>
 				<artifactId>mapstruct</artifactId>
 				<version>${mapstruct.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-annotations</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>${h2.version}</version>
-			</dependency>
-
-			<!-- Testing -->
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>${junit-jupiter.version}</version>
-				<scope>test</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
-	<!-- Lombok hereda automáticamente en todos los módulos hijo -->
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -103,4 +77,41 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<annotationProcessorPaths>
+							<path>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+								<version>${lombok.version}</version>
+							</path>
+							<path>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok-mapstruct-binding</artifactId>
+								<version>0.2.0</version>
+							</path>
+							<path>
+								<groupId>org.mapstruct</groupId>
+								<artifactId>mapstruct-processor</artifactId>
+								<version>${mapstruct.version}</version>
+							</path>
+						</annotationProcessorPaths>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>

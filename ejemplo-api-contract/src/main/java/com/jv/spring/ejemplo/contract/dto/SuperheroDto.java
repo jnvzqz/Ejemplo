@@ -7,7 +7,7 @@ public record SuperheroDto(
 		@JsonProperty("Id")
 		Long id,
 
-		@NotNull(message = "El nombre del héroe no puede ser nulo")
+		@NotNull(message = "Hero name must not be null")
 		@JsonProperty("HeroName")
 		String heroName,
 

@@ -3,7 +3,7 @@ package com.jv.spring.ejemplo.application.usecase;
 import com.jv.spring.ejemplo.application.mapper.SuperheroMapper;
 import com.jv.spring.ejemplo.contract.dto.SuperheroDto;
 import com.jv.spring.ejemplo.contract.dto.SuperheroResponse;
-import com.jv.spring.ejemplo.contract.exception.SuperheroNotFoundException;
+import com.jv.spring.ejemplo.core.exception.SuperheroNotFoundException;
 import com.jv.spring.ejemplo.core.model.Superhero;
 import com.jv.spring.ejemplo.core.ports.outbound.SuperheroRepository;
 import org.junit.jupiter.api.Test;
@@ -57,17 +57,17 @@ class SuperheroServiceImplTest {
     }
 
     @Test
-    void obtenerTodosPaginado_ok() {
+    void findAllPaginated_ok() {
         // Arrange
         Superhero hero = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroDto dto = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
 
-        when(superheroRepository.findAllPaginado(0, 10)).thenReturn(List.of(hero));
+        when(superheroRepository.findAllPaginated(0, 10)).thenReturn(List.of(hero));
         when(superheroRepository.countAll()).thenReturn(1L);
         when(superheroMapper.toDto(hero)).thenReturn(dto);
 
         // Act
-        SuperheroResponse result = superheroService.obtenerTodosPaginado(0, 10);
+        SuperheroResponse result = superheroService.findAllPaginated(0, 10);
 
         // Assert
         assertNotNull(result);
@@ -75,33 +75,34 @@ class SuperheroServiceImplTest {
         assertEquals(1L, result.totalElements());
         assertEquals(1, result.totalPages());
         assertTrue(result.last());
-        verify(superheroRepository, times(1)).findAllPaginado(0, 10);
+        verify(superheroRepository, times(1)).findAllPaginated(0, 10);
         verify(superheroRepository, times(1)).countAll();
         verify(superheroMapper, times(1)).toDto(hero);
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
 
     @Test
-    void obtenerTodosPaginado_listaVacia_ok() {
+    void findAllPaginated_emptyList_ok() {
         // Arrange
-        when(superheroRepository.findAllPaginado(0, 10)).thenReturn(List.of());
+        when(superheroRepository.findAllPaginated(0, 10)).thenReturn(List.of());
         when(superheroRepository.countAll()).thenReturn(0L);
 
         // Act
-        SuperheroResponse result = superheroService.obtenerTodosPaginado(0, 10);
+        SuperheroResponse result = superheroService.findAllPaginated(0, 10);
 
         // Assert
         assertNotNull(result);
         assertTrue(result.content().isEmpty());
         assertEquals(0L, result.totalElements());
         assertEquals(0, result.totalPages());
-        verify(superheroRepository, times(1)).findAllPaginado(0, 10);
+        assertTrue(result.last());
+        verify(superheroRepository, times(1)).findAllPaginated(0, 10);
         verify(superheroRepository, times(1)).countAll();
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
 
     @Test
-    void buscarPorId_ok() {
+    void findById_ok() {
         // Arrange
         Superhero hero = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroDto dto = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
@@ -110,7 +111,7 @@ class SuperheroServiceImplTest {
         when(superheroMapper.toDto(hero)).thenReturn(dto);
 
         // Act
-        SuperheroDto result = superheroService.buscarPorId(1L);
+        SuperheroDto result = superheroService.findById(1L);
 
         // Assert
         assertNotNull(result);
@@ -121,55 +122,59 @@ class SuperheroServiceImplTest {
     }
 
     @Test
-    void buscarPorId_noEncontrado_lanzaExcepcion() {
+    void findById_notFound_throwsException() {
         // Arrange
         when(superheroRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(SuperheroNotFoundException.class, () -> superheroService.buscarPorId(99L));
+        SuperheroNotFoundException ex = assertThrows(SuperheroNotFoundException.class,
+                () -> superheroService.findById(99L));
+        assertEquals("Superhero with id: 99 was not found", ex.getMessage());
         verify(superheroRepository, times(1)).findById(99L);
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
 
     @Test
-    void buscarPorNombrePaginado_ok() {
+    void findByNamePaginated_ok() {
         // Arrange
         Superhero hero = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroDto dto = new SuperheroDto(1L, "Spider-Man", "Peter Parker", "Web-slinging");
 
-        when(superheroRepository.findByHeroNamePaginado("Spider", 0, 10)).thenReturn(List.of(hero));
-        when(superheroRepository.countByHeroName("Spider")).thenReturn(1L);
+        when(superheroRepository.findByNamePaginated("Spider", 0, 10)).thenReturn(List.of(hero));
+        when(superheroRepository.countByName("Spider")).thenReturn(1L);
         when(superheroMapper.toDto(hero)).thenReturn(dto);
 
         // Act
-        SuperheroResponse result = superheroService.buscarPorNombrePaginado("Spider", 0, 10);
+        SuperheroResponse result = superheroService.findByNamePaginated("Spider", 0, 10);
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.content().size());
         assertEquals(1L, result.totalElements());
         assertEquals(1, result.totalPages());
-        verify(superheroRepository, times(1)).findByHeroNamePaginado("Spider", 0, 10);
-        verify(superheroRepository, times(1)).countByHeroName("Spider");
+        verify(superheroRepository, times(1)).findByNamePaginated("Spider", 0, 10);
+        verify(superheroRepository, times(1)).countByName("Spider");
         verify(superheroMapper, times(1)).toDto(hero);
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
 
     @Test
-    void buscarPorNombrePaginado_sinResultados_ok() {
+    void findByNamePaginated_noResults_ok() {
         // Arrange
-        when(superheroRepository.findByHeroNamePaginado("Xyzzy", 0, 10)).thenReturn(List.of());
-        when(superheroRepository.countByHeroName("Xyzzy")).thenReturn(0L);
+        when(superheroRepository.findByNamePaginated("Xyzzy", 0, 10)).thenReturn(List.of());
+        when(superheroRepository.countByName("Xyzzy")).thenReturn(0L);
 
         // Act
-        SuperheroResponse result = superheroService.buscarPorNombrePaginado("Xyzzy", 0, 10);
+        SuperheroResponse result = superheroService.findByNamePaginated("Xyzzy", 0, 10);
 
         // Assert
         assertNotNull(result);
         assertTrue(result.content().isEmpty());
         assertEquals(0L, result.totalElements());
-        verify(superheroRepository, times(1)).findByHeroNamePaginado("Xyzzy", 0, 10);
-        verify(superheroRepository, times(1)).countByHeroName("Xyzzy");
+        assertEquals(0, result.totalPages());
+        assertTrue(result.last());
+        verify(superheroRepository, times(1)).findByNamePaginated("Xyzzy", 0, 10);
+        verify(superheroRepository, times(1)).countByName("Xyzzy");
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
 
@@ -202,15 +207,16 @@ class SuperheroServiceImplTest {
     }
 
     @Test
-    void patchSuperhero_soloHeroName_mantieneCamposExistentes() {
-        // Arrange — solo se envía heroName, el resto debe conservar los valores originales
+    void patchSuperhero_onlyHeroName_keepsExistingFields() {
+        // Arrange — only heroName is provided, the rest must keep existing values
         Superhero existing = new Superhero(1L, "Spider-Man", "Peter Parker", "Web-slinging");
         SuperheroDto patch = new SuperheroDto(null, "Scarlet Spider", null, null);
         ArgumentCaptor<Superhero> saveCaptor = ArgumentCaptor.forClass(Superhero.class);
 
         when(superheroRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(superheroRepository.save(any(Superhero.class))).thenReturn(existing);
-        when(superheroMapper.toDto(any(Superhero.class))).thenReturn(new SuperheroDto(1L, "Scarlet Spider", "Peter Parker", "Web-slinging"));
+        when(superheroMapper.toDto(any(Superhero.class)))
+                .thenReturn(new SuperheroDto(1L, "Scarlet Spider", "Peter Parker", "Web-slinging"));
 
         // Act
         superheroService.patchSuperhero(1L, patch);
@@ -224,14 +230,16 @@ class SuperheroServiceImplTest {
     }
 
     @Test
-    void patchSuperhero_noEncontrado_lanzaExcepcion() {
+    void patchSuperhero_notFound_throwsException() {
         // Arrange
         SuperheroDto patch = new SuperheroDto(null, "New Name", null, null);
 
         when(superheroRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(SuperheroNotFoundException.class, () -> superheroService.patchSuperhero(99L, patch));
+        SuperheroNotFoundException ex = assertThrows(SuperheroNotFoundException.class,
+                () -> superheroService.patchSuperhero(99L, patch));
+        assertEquals("Superhero with id: 99 was not found", ex.getMessage());
         verify(superheroRepository, times(1)).findById(99L);
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
@@ -254,12 +262,14 @@ class SuperheroServiceImplTest {
     }
 
     @Test
-    void deleteSuperhero_noEncontrado_lanzaExcepcion() {
+    void deleteSuperhero_notFound_throwsException() {
         // Arrange
         when(superheroRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(SuperheroNotFoundException.class, () -> superheroService.deleteSuperhero(99L));
+        SuperheroNotFoundException ex = assertThrows(SuperheroNotFoundException.class,
+                () -> superheroService.deleteSuperhero(99L));
+        assertEquals("Superhero with id: 99 was not found", ex.getMessage());
         verify(superheroRepository, times(1)).findById(99L);
         verifyNoMoreInteractions(superheroRepository, superheroMapper);
     }
